@@ -40,6 +40,12 @@ export const routes: IBestAFSRoute[] = [
         name: 'message-create',
         exact: true,
       },
+      {
+        path: '/home/account-list',
+        component: '@/pages/home/account-list',
+        name: 'account-list',
+        exact: true,
+      },
     ],
   },
 ];

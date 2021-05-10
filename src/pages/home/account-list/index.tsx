@@ -1,6 +1,6 @@
 import { Typography } from 'antd';
 
-import TypedSpan from 'components/typed-span';
+import TypedSpan from '@/components/typed-span';
 import Table from './table';
 import Search from './search';
 
