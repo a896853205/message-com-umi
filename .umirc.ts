@@ -18,5 +18,7 @@ export default defineConfig({
   request: {
     dataField: '',
   },
-  dynamicImport: {},
+  dynamicImport: {
+    loading: '@/components/page-loading'
+  },
 });
