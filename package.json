@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@ant-design/pro-layout": "^6.5.0",
+    "@types/react-copy-to-clipboard": "^5.0.0",
     "@umijs/plugin-sass": "^1.1.1",
     "@umijs/preset-react": "1.x",
     "react-copy-to-clipboard": "^5.0.3",

@@ -14,8 +14,11 @@ const { Title } = Typography;
 const MessageList = () => {
   const [form] = Form.useForm();
   const { run, loading } = useRequest(getMessages, {
+    debounceInterval: 300,
+    manual: true,
     onSuccess: (data) => {
       setMessages(data.messages);
+      setTotal(data.count);
     },
   });
 
@@ -25,16 +28,9 @@ const MessageList = () => {
   const [code, setCode] = useState<number>();
   const [message, setMessage] = useState<string>();
   const [type, setType] = useState<string>();
+  const [total, setTotal] = useState(0);
 
-  const [messages, setMessages] = useState<MC.Message[]>([
-    {
-      id: 1,
-      uuid: '123456789asdasd',
-      code: 23151,
-      message: '注册成功，请等待审核',
-      type: 'success',
-    },
-  ]);
+  const [messages, setMessages] = useState<MC.Message[]>([]);
 
   const [page, setPage] = useState(1);
 
@@ -42,9 +38,9 @@ const MessageList = () => {
     (async () => {
       try {
         const values = await form.validateFields();
-        // TODO: run中输入values参数
-        console.log(values);
-        run();
+
+        const { code, message, type } = values;
+        run(code, message, type, page);
       } catch (errorInfo) {
         console.error('Failed:', errorInfo);
       }
@@ -62,7 +58,12 @@ const MessageList = () => {
         setMessage={setMessage}
         setType={setType}
       />
-      <Table setPage={setPage} messages={messages} />
+      <Table
+        setPage={setPage}
+        messages={messages}
+        loading={loading}
+        total={total}
+      />
     </Typography>
   );
 };

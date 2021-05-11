@@ -11,6 +11,8 @@ const { Column } = Table;
 interface Props {
   setPage: (page: number) => void;
   messages: MC.Message[];
+  loading: boolean;
+  total: number;
 }
 /**
  * 通过信息类型获取Tag颜色
@@ -31,22 +33,24 @@ const getTagColorFromType = (type: string) => {
       return 'gray';
   }
 };
-const MessageTable: FC<Props> = ({ setPage, messages }) => {
+const MessageTable: FC<Props> = ({ setPage, messages, loading, total }) => {
   return (
     <Table<MC.Message>
       dataSource={messages}
       size="small"
       style={{ width: '100%' }}
-      rowKey={record => record.code}
+      rowKey={(record) => record.code}
       pagination={{
-        onChange: page => setPage(page),
+        onChange: (page) => setPage(page),
+        total,
       }}
+      loading={loading}
     >
       <Column
         title="Type"
         dataIndex="type"
         key="type"
-        render={text => <Tag color={getTagColorFromType(text)}>{text}</Tag>}
+        render={(text) => <Tag color={getTagColorFromType(text)}>{text}</Tag>}
         width={100}
       />
       <Column title="Code" dataIndex="code" key="code" />
@@ -62,7 +66,7 @@ const MessageTable: FC<Props> = ({ setPage, messages }) => {
                 text={`res.setHeader('code', '${record.code}');`}
                 onCopy={() => {
                   message.success(
-                    `res.setHeader('code', '${record.code}'); copy success`
+                    `res.setHeader('code', '${record.code}'); copy success`,
                   );
                 }}
               >
