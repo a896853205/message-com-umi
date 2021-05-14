@@ -1,22 +1,40 @@
 import { Typography } from 'antd';
+import { useState, useEffect } from 'react';
+import { useRequest } from 'umi';
 
 import TypedSpan from '@/components/typed-span';
 import styles from './message-create.module.scss';
 import Form from './form';
 import Remind from './remind';
+import { recommend } from '@/services/apis/message';
 
 const { Title } = Typography;
 
 const MessageList = () => {
+  // const [code, setCode] = useState<number>();
+  const [message, setMessage] = useState<string>('');
+  // const [type, setType] = useState<string>();
+  const [messageList, setMessageList] = useState<string[]>([]);
+  const { run } = useRequest(recommend, {
+    debounceInterval: 300,
+    manual: true,
+    onSuccess: (data) => {
+      setMessageList(data);
+      // setTotal(data.count);
+    },
+  });
+  useEffect(() => {
+    run(message);
+  }, [message]);
   return (
     <Typography>
       <Title>
         <TypedSpan strings="Create Message" />
       </Title>
       <div className={styles['message-create-box']}>
-        <Form />
+        <Form setMessage={setMessage} />
         <div className={styles['divider']} />
-        <Remind />
+        <Remind messageList={messageList} />
       </div>
     </Typography>
   );

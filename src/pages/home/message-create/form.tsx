@@ -1,5 +1,8 @@
+import { useRequest } from 'umi';
 import { Form, Input, Button, Select, Tag, Space } from 'antd';
+import { FC, useEffect, useState } from 'react';
 
+import { newCode, recommend } from '@/services/apis/message';
 import styles from './form.module.scss';
 
 const { Option } = Select;
@@ -11,15 +14,33 @@ const layout = {
 const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
-
-const MessageCreateForm = () => {
+interface Props {
+  setMessage: (message: string) => void;
+}
+const MessageCreateForm: FC<Props> = ({ setMessage }) => {
+  const [type, setType] = useState<string>();
+  const [code, setCode] = useState<string>();
+  const [falg, setFlag] = useState<boolean>(false); // 设置标志位，按钮随之变化
+  // const [message, setMessage] = useState('');
   const [form] = Form.useForm();
-
+  const { run } = useRequest(newCode, {
+    debounceInterval: 300,
+    manual: true,
+    onSuccess: (data) => {
+      setCode(data.code);
+    },
+  });
   // TODO: 成功之后需要有复制key相关信息的按钮逻辑
   return (
     <Form form={form} {...layout} className={styles['form-box']}>
       <Form.Item name="type" label="Type" rules={[{ required: true }]}>
-        <Select placeholder="Select a type of message" allowClear>
+        <Select
+          placeholder="Select a type of message"
+          allowClear
+          onChange={(value) => {
+            setType(value as string | undefined);
+          }}
+        >
           <Option value="male">
             <Tag color="blue">information</Tag>
           </Option>
@@ -39,18 +60,40 @@ const MessageCreateForm = () => {
       </Form.Item>
 
       <Form.Item name="message" label="Message" rules={[{ required: true }]}>
-        <Input />
+        <Input
+          onChange={(e) => {
+            setMessage(e.target.value);
+          }}
+        />
       </Form.Item>
 
       <Form.Item {...tailLayout}>
         <Space>
           {/* TODO: 有重新获取的字眼 */}
-          <Button type="link" htmlType="submit">
-            get "Key" !!!
-          </Button>
+          {falg ? (
+            <Button
+              type="link"
+              htmlType="submit"
+              onClick={() => {
+                run(type as string);
+              }}
+            >
+              满意
+            </Button>
+          ) : (
+            <Button
+              type="link"
+              htmlType="submit"
+              onClick={() => {
+                run(type as string);
+              }}
+            >
+              get "Code" !!!
+            </Button>
+          )}
 
           <span>
-            Key: <Tag color="#f50">20035</Tag>
+            Code: <Tag color="#f50">{code}</Tag>
           </span>
         </Space>
       </Form.Item>
