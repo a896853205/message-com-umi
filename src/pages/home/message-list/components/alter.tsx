@@ -1,6 +1,6 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { useRequest } from 'umi';
-import { Modal, Form, Select, Tag, Input } from 'antd';
+import { Modal, Form, Input, Button, Space, message as alert } from 'antd';
 
 import { alterMessage } from '@/services/apis/message';
 
@@ -9,38 +9,53 @@ interface Props {
   message: MC.Message;
   setAlterVisable: (visable: boolean) => void;
 }
-const { run, loading } = useRequest(alterMessage, {
-  debounceInterval: 300,
-  manual: true,
-  onSuccess: (data) => {
-    /* setMessages(data.messages);
-    setTotal(data.count); */
-  },
-});
 const Alter: FC<Props> = ({ visable, message, setAlterVisable }) => {
-  const [newMessage, setNewMessage] = useState(message.message);
+  const { run } = useRequest(alterMessage, {
+    debounceInterval: 300,
+    manual: true,
+    onSuccess: (data) => {
+      setAlterVisable(false); // TODO:完成修改后的实时刷新
+      alert.success('修改完毕！');
+    },
+  });
   console.log('弹窗内部接受的message:', message.message);
-  console.log('newMessage', newMessage);
-  const handleOk = () => {
-    run(message.id, newMessage);
+  const tailLayout = {
+    wrapperCol: { offset: 16, span: 16 },
+  };
+  const handleOk = (value: any) => {
+    console.log('form get value:', value);
+    run(message.id, value.message);
   };
   return (
     <>
       <Modal
         visible={visable}
         title="修改message"
-        onOk={handleOk}
-        onCancel={() => {
-          setAlterVisable(false);
-        }}
+        footer={null}
+        closable={false}
+        destroyOnClose={true}
       >
-        <Input
-          defaultValue={message.message}
-          value={newMessage}
-          onChange={(e) => {
-            setNewMessage(e.target.value);
-          }}
-        />
+        <Form onFinish={handleOk}>
+          <Form.Item name="message" label="Message">
+            <Input defaultValue={message.message} />
+            {/*不能做到根据传入值默认显示*/}
+          </Form.Item>
+          <Form.Item {...tailLayout}>
+            <Space>
+              <Button type="primary" htmlType="submit">
+                确定
+              </Button>
+              <Button
+                htmlType="button"
+                onClick={() => {
+                  setAlterVisable(false);
+                }}
+              >
+                取消
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );

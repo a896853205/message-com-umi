@@ -63,6 +63,7 @@ const MessageList = () => {
         messages={messages}
         loading={loading}
         total={total}
+        setTotal={setTotal}
       />
     </Typography>
   );

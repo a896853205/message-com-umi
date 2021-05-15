@@ -1,8 +1,18 @@
 import { useRequest } from 'umi';
-import { Form, Input, Button, Select, Tag, Space } from 'antd';
-import { FC, useEffect, useState } from 'react';
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  Tag,
+  Space,
+  message as alert,
+} from 'antd';
+import { FC, useState } from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { CopyOutlined } from '@ant-design/icons';
 
-import { newCode, recommend } from '@/services/apis/message';
+import { newCode, create } from '@/services/apis/message';
 import styles from './form.module.scss';
 
 const { Option } = Select;
@@ -16,21 +26,33 @@ const tailLayout = {
 };
 interface Props {
   setMessage: (message: string) => void;
+  message: string;
 }
-const MessageCreateForm: FC<Props> = ({ setMessage }) => {
+const MessageCreateForm: FC<Props> = ({ setMessage, message }) => {
   const [type, setType] = useState<string>();
-  const [code, setCode] = useState<string>();
-  const [falg, setFlag] = useState<boolean>(false); // 设置标志位，按钮随之变化
-  // const [message, setMessage] = useState('');
+  const [code, setCode] = useState<string>('123456');
+  const [falg, setFlag] = useState<boolean>(false); // 标志位，按钮随之变化
   const [form] = Form.useForm();
-  const { run } = useRequest(newCode, {
+  const codeRequest = useRequest(newCode, {
     debounceInterval: 300,
     manual: true,
-    onSuccess: (data) => {
-      setCode(data.code);
+    onSuccess: (data: unknown) => {
+      console.log('获取后台生成的随机code:', data);
+      setCode(data as string);
+      setFlag(true);
     },
   });
-  // TODO: 成功之后需要有复制key相关信息的按钮逻辑
+  const createRequest = useRequest(create, {
+    manual: true,
+    onSuccess: (data) => {
+      //setCode(data.code);
+      console.log('create Message result:', data);
+      alert.success('添加成功');
+    },
+    onError: () => {
+      alert.error('添加失败，请重试！');
+    },
+  });
   return (
     <Form form={form} {...layout} className={styles['form-box']}>
       <Form.Item name="type" label="Type" rules={[{ required: true }]}>
@@ -69,41 +91,61 @@ const MessageCreateForm: FC<Props> = ({ setMessage }) => {
 
       <Form.Item {...tailLayout}>
         <Space>
-          {/* TODO: 有重新获取的字眼 */}
           {falg ? (
-            <Button
-              type="link"
-              htmlType="submit"
-              onClick={() => {
-                run(type as string);
-              }}
-            >
-              满意
-            </Button>
+            <Space>
+              <Button
+                type="link"
+                htmlType="submit"
+                onClick={() => {
+                  console.log(
+                    '要创建新message之前的message值',
+                    message,
+                    type,
+                    code,
+                  );
+                  createRequest.run(type as string, message, code);
+                }}
+              >
+                满意
+              </Button>
+              <Button
+                type="primary"
+                onClick={() => {
+                  codeRequest.run(type as string);
+                }}
+              >
+                重新获取
+              </Button>
+              <span>
+                Code: <Tag color="#f50">{code}</Tag>
+              </span>
+              <CopyToClipboard
+                text={`res.setHeader('code', '${code}');`}
+                onCopy={() => {
+                  alert.success(
+                    `res.setHeader('code', '${code}'); copy success`,
+                  );
+                }}
+              >
+                <Button type="link">
+                  <CopyOutlined />
+                  copy
+                </Button>
+              </CopyToClipboard>
+            </Space>
           ) : (
             <Button
               type="link"
               htmlType="submit"
               onClick={() => {
-                run(type as string);
+                codeRequest.run(type as string);
               }}
             >
               get "Code" !!!
             </Button>
           )}
-
-          <span>
-            Code: <Tag color="#f50">{code}</Tag>
-          </span>
         </Space>
       </Form.Item>
-
-      {/* TODO: 有key值之后可以点击Satisfied字眼 */}
-      {/* <Form.Item>
-        <Button disabled htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item> */}
     </Form>
   );
 };

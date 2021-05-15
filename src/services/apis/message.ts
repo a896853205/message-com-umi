@@ -30,34 +30,37 @@ export const messages = (
  * 根据message id删除message
  * @param id message id
  */
-export const deleteMessage = (id: number) => {
+export const deleteMessage = (id: number) =>
   client.delete('messages', {
     params: {
       id,
     },
   });
-};
 
 /**
  * 根据message id修改message内容
  * @param id message id
  * @param message 信息内容
  */
-export const alterMessage = (id: number, message: string) => {
+export const alterMessage = (id: number, message: string) =>
   client.put('messages', {
     params: {
       id,
       message,
     },
   });
-};
 
 /**
  * 根据输入的message获取推荐message
  * @param message 参考message
  * @returns 推荐message列表
  */
-export const recommend = (message: string): Promise<string[]> =>
+export const recommend = (
+  message: string,
+): Promise<{
+  recommend: string[];
+  count: number;
+}> =>
   client.get('messages/recommend', {
     params: {
       message,
@@ -82,7 +85,7 @@ export const newCode = (type: string): Promise<string> =>
  * @param message 信息内容
  * @param code code值
  */
-export const create = (type: string, message: string, code: string) => {
+export const create = (type: string, message: string, code: string) =>
   client.put('messages/create', {
     params: {
       type,
@@ -90,4 +93,3 @@ export const create = (type: string, message: string, code: string) => {
       code,
     },
   });
-};

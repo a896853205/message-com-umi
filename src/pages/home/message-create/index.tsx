@@ -11,16 +11,14 @@ import { recommend } from '@/services/apis/message';
 const { Title } = Typography;
 
 const MessageList = () => {
-  // const [code, setCode] = useState<number>();
   const [message, setMessage] = useState<string>('');
-  // const [type, setType] = useState<string>();
   const [messageList, setMessageList] = useState<string[]>([]);
   const { run } = useRequest(recommend, {
     debounceInterval: 300,
     manual: true,
     onSuccess: (data) => {
-      setMessageList(data);
-      // setTotal(data.count);
+      console.log('create message return:', data);
+      setMessageList(data.recommend);
     },
   });
   useEffect(() => {
@@ -32,7 +30,7 @@ const MessageList = () => {
         <TypedSpan strings="Create Message" />
       </Title>
       <div className={styles['message-create-box']}>
-        <Form setMessage={setMessage} />
+        <Form setMessage={setMessage} message={message} />
         <div className={styles['divider']} />
         <Remind messageList={messageList} />
       </div>

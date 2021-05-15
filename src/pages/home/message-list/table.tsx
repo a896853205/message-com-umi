@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 
 import { useRequest } from 'umi';
-import { Table, Button, Divider, Tag, message, Modal } from 'antd';
+import { Table, Button, Divider, Tag, message as alert, Modal } from 'antd';
 import { CopyOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 // TODO：换成异步的Clipboard
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -17,6 +17,7 @@ interface Props {
   messages: MC.Message[];
   loading: boolean;
   total: number;
+  setTotal: (total: number) => void;
 }
 /**
  * 通过信息类型获取Tag颜色
@@ -38,37 +39,43 @@ const getTagColorFromType = (type: string) => {
   }
 };
 
-/**
- * 弹出删除确认框
- * @param id 删除的目标message的id
- */
-const { run, loading } = useRequest(deleteMessage, {
-  debounceInterval: 300,
-  manual: true,
-  onSuccess: (data) => {
-    console.log(data);
-    /*  setMessages(data.messages);
-    setTotal(data.count); */
-  },
-});
-const showConfirm = (id: number) => {
-  confirm({
-    title: '您确定要删除这条message吗？',
-    icon: <ExclamationCircleOutlined />,
-    content: '一旦删除，不可恢复哦~',
-    onOk(id) {
-      // TODO:后台请求删除message
-      run(id);
-    },
-    onCancel() {
-      console.log('cancel message delete');
+const MessageTable: FC<Props> = ({
+  setPage,
+  messages,
+  loading,
+  total,
+  setTotal,
+}) => {
+  const [alterVisable, setAlterVisable] = useState(false); // TODO:改为useBoolean
+  const [alterMessage, setAlterMessage] = useState<MC.Message | undefined>();
+  /**
+   * 弹出删除确认框
+   * @param id 删除的目标message的id
+   */
+  const { run } = useRequest(deleteMessage, {
+    debounceInterval: 300,
+    manual: true,
+    onSuccess: (data) => {
+      console.log('删除的返回值是：', data);
+      setTotal(total - 1);
+      alert.success('删除成功');
     },
   });
-};
+  const showConfirm = (id: number) => {
+    confirm({
+      title: '您确定要删除这条message吗？',
+      icon: <ExclamationCircleOutlined />,
+      content: '一旦删除，不可恢复哦~',
+      onOk() {
+        console.log('将要删除的message的id是：', id);
+        run(id);
+      },
+      onCancel() {
+        console.log('cancel message delete');
+      },
+    });
+  };
 
-const MessageTable: FC<Props> = ({ setPage, messages, loading, total }) => {
-  const [alterVisable, setAlterVisable] = useState(false); // TODO:优化为useBoolean
-  const [alterMessage, setAlterMessage] = useState<MC.Message>(messages[0]);
   return (
     <>
       <Table<MC.Message>
@@ -101,7 +108,7 @@ const MessageTable: FC<Props> = ({ setPage, messages, loading, total }) => {
                 <CopyToClipboard
                   text={`res.setHeader('code', '${record.code}');`}
                   onCopy={() => {
-                    message.success(
+                    alert.success(
                       `res.setHeader('code', '${record.code}'); copy success`,
                     );
                   }}
@@ -116,7 +123,6 @@ const MessageTable: FC<Props> = ({ setPage, messages, loading, total }) => {
                   type="link"
                   onClick={() => {
                     setAlterVisable(true);
-                    console.log('点击item的message', record);
                     setAlterMessage(record);
                   }}
                 >
@@ -137,12 +143,15 @@ const MessageTable: FC<Props> = ({ setPage, messages, loading, total }) => {
           }}
         />
       </Table>
-      {console.log('显示弹窗之前alterMessage', alterMessage)}
-      <Alter
-        visable={alterVisable}
-        message={alterMessage}
-        setAlterVisable={setAlterVisable}
-      />
+      {alterMessage ? (
+        <Alter
+          visable={alterVisable}
+          message={alterMessage}
+          setAlterVisable={setAlterVisable}
+        />
+      ) : (
+        <></>
+      )}
     </>
   );
 };
