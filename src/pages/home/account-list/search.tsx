@@ -1,18 +1,23 @@
+import { FC } from 'react';
 import { Form, Input, Select } from 'antd';
 
 import styles from './search.module.scss';
 
+interface SearchProps {
+  handleNameChange: (name: string) => void;
+  handleIsAuthChange: (isAuth?: number) => void;
+}
 const { Option } = Select;
-const Search = () => {
+const Search: FC<SearchProps> = ({ handleNameChange, handleIsAuthChange }) => {
   return (
     <div className={styles['search-box']}>
       <Form layout="inline">
         <Form.Item label="Name" name="name">
-          <Input />
+          <Input onChange={(evt) => handleNameChange(evt.target.value)} />
         </Form.Item>
 
         <Form.Item label="Isauth">
-          <Select>
+          <Select onChange={(evt) => handleIsAuthChange(Number(evt))} clearIcon>
             <Option value={0}>auth</Option>
             <Option value={1}>unauth</Option>
           </Select>

@@ -24,4 +24,7 @@ export default defineConfig({
   locale: {
     default: 'zh-CN',
   },
+  mock: {
+    exclude: [],
+  },
 });

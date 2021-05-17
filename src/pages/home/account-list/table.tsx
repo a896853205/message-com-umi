@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import { Table, Button, Avatar, Tag } from 'antd';
 
 const { Column } = Table;
@@ -17,29 +18,37 @@ const getTagColorFromType = (isAuth: number) => {
       return 'gray';
   }
 };
-const AccountTable = () => {
-  const mockData = [
-    {
-      id: 23151,
-      isAuth: 1,
-      name: 'Qcccccc',
-      avatarUrl: 'https://avatars.githubusercontent.com/u/19189063?v=4',
-      creatdAt: '2021-06-02 16:23',
-    },
-  ];
 
+interface TableProps {
+  accounts: MC.Account[];
+  loading: boolean;
+  handlePageChange: (page: number) => void;
+  total: number;
+}
+
+const AccountTable: FC<TableProps> = ({
+  accounts,
+  loading,
+  handlePageChange,
+  total,
+}) => {
   return (
     <Table
-      dataSource={mockData}
+      dataSource={accounts}
+      loading={loading}
       size="small"
       style={{ width: '100%' }}
-      rowKey={record => record.id}
+      rowKey={(record) => record.id}
+      pagination={{
+        onChange: (page) => handlePageChange(page),
+        total,
+      }}
     >
       <Column
         title="Avatar"
         dataIndex="avatarUrl"
         key="avatarUrl"
-        render={text => {
+        render={(text) => {
           return <Avatar src={text}>U</Avatar>;
         }}
         width={100}
@@ -48,7 +57,7 @@ const AccountTable = () => {
         title="IsAuth"
         dataIndex="isAuth"
         key="isAuth"
-        render={text => <Tag color={getTagColorFromType(text)}>{text}</Tag>}
+        render={(text) => <Tag color={getTagColorFromType(text)}>{text}</Tag>}
         width={100}
       />
       <Column title="Name" dataIndex="name" key="name" />
