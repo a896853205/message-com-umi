@@ -72,7 +72,7 @@ export const recommend = (
  * @param type message类型
  * @returns 新的code
  */
-export const newCode = (type: string): Promise<string> =>
+export const newCode = (type: string): Promise<{ code: string }> =>
   client.get('messages/newCode', {
     params: {
       type,
