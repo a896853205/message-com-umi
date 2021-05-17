@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRequest } from 'umi';
 
 import { Typography, Form } from 'antd';
+import { useBoolean } from 'ahooks';
 
 import TypedSpan from '@/components/typed-span';
 import Table from './table';
@@ -33,19 +34,28 @@ const MessageList = () => {
   const [messages, setMessages] = useState<MC.Message[]>([]);
 
   const [page, setPage] = useState(1);
+  const [isFresh, { setTrue, setFalse }] = useBoolean(true);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const values = await form.validateFields();
-
-        const { code, message, type } = values;
-        run(code, message, type, page);
-      } catch (errorInfo) {
-        console.error('Failed:', errorInfo);
-      }
-    })();
+    setTrue();
   }, [code, message, type, page]);
+
+  const searchFetch = useCallback(async () => {
+    try {
+      const values = await form.validateFields();
+
+      const { formCode, formMessage, formType } = values;
+      run(formCode, formMessage, formType, page);
+    } catch (errorInfo) {
+      console.error('Failed:', errorInfo);
+    }
+  }, [code, message, type, page]);
+
+  useEffect(() => {
+    searchFetch().finally(() => {
+      setFalse();
+    });
+  }, [isFresh]);
 
   return (
     <Typography>
@@ -63,7 +73,8 @@ const MessageList = () => {
         messages={messages}
         loading={loading}
         total={total}
-        setTotal={setTotal}
+        handleRemove={setTrue}
+        handleAlter={setTrue}
       />
     </Typography>
   );

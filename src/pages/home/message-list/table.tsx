@@ -17,7 +17,8 @@ interface Props {
   messages: MC.Message[];
   loading: boolean;
   total: number;
-  setTotal: (total: number) => void;
+  handleRemove: () => void;
+  handleAlter: () => void;
 }
 /**
  * 通过信息类型获取Tag颜色
@@ -44,30 +45,31 @@ const MessageTable: FC<Props> = ({
   messages,
   loading,
   total,
-  setTotal,
+  handleRemove,
+  handleAlter
 }) => {
   const [alterVisable, setAlterVisable] = useState(false); // TODO:改为useBoolean
-  const [alterMessage, setAlterMessage] = useState<MC.Message | undefined>();
+  const [alterMessage, setAlterMessage] = useState<MC.Message>();
+
+  const { run } = useRequest(deleteMessage, {
+    debounceInterval: 300,
+    manual: true,
+    onSuccess: () => {
+      handleRemove();
+      alert.success('删除成功');
+    },
+  });
+
   /**
    * 弹出删除确认框
    * @param id 删除的目标message的id
    */
-  const { run } = useRequest(deleteMessage, {
-    debounceInterval: 300,
-    manual: true,
-    onSuccess: (data) => {
-      console.log('删除的返回值是：', data);
-      setTotal(total - 1);
-      alert.success('删除成功');
-    },
-  });
   const showConfirm = (id: number) => {
     confirm({
       title: '您确定要删除这条message吗？',
       icon: <ExclamationCircleOutlined />,
       content: '一旦删除，不可恢复哦~',
       onOk() {
-        console.log('将要删除的message的id是：', id);
         run(id);
       },
       onCancel() {
@@ -122,8 +124,8 @@ const MessageTable: FC<Props> = ({
                 <Button
                   type="link"
                   onClick={() => {
-                    setAlterVisable(true);
                     setAlterMessage(record);
+                    setAlterVisable(true);
                   }}
                 >
                   alter
@@ -143,15 +145,12 @@ const MessageTable: FC<Props> = ({
           }}
         />
       </Table>
-      {alterMessage ? (
-        <Alter
-          visable={alterVisable}
-          message={alterMessage}
-          setAlterVisable={setAlterVisable}
-        />
-      ) : (
-        <></>
-      )}
+      <Alter
+        visable={alterVisable}
+        message={alterMessage}
+        setAlterVisable={setAlterVisable}
+        handleAlter={handleAlter}
+      />
     </>
   );
 };

@@ -48,6 +48,7 @@ const MessageCreateForm: FC<Props> = ({ setMessage, message }) => {
       //setCode(data.code);
       console.log('create Message result:', data);
       alert.success('添加成功');
+      // TODO: 需要跳转到添加成功界面，那个界面有两个按钮‘copy’与‘继续添加’
     },
     onError: () => {
       alert.error('添加失败，请重试！');

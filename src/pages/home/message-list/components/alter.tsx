@@ -6,58 +6,72 @@ import { alterMessage } from '@/services/apis/message';
 
 interface Props {
   visable: boolean;
-  message: MC.Message;
+  message?: MC.Message;
   setAlterVisable: (visable: boolean) => void;
+  handleAlter: () => void;
 }
-const Alter: FC<Props> = ({ visable, message, setAlterVisable }) => {
+
+const TAIL_LAYOUT = {
+  wrapperCol: { offset: 16, span: 16 },
+};
+
+// TODO: 添加loading,表单认证
+const Alter: FC<Props> = ({
+  visable,
+  message,
+  setAlterVisable,
+  handleAlter,
+}) => {
   const { run } = useRequest(alterMessage, {
     debounceInterval: 300,
     manual: true,
-    onSuccess: (data) => {
-      setAlterVisable(false); // TODO:完成修改后的实时刷新
+    onSuccess: () => {
+      setAlterVisable(false);
+      handleAlter();
       alert.success('修改完毕！');
     },
   });
-  console.log('弹窗内部接受的message:', message.message);
-  const tailLayout = {
-    wrapperCol: { offset: 16, span: 16 },
+
+  const handleOk = (value: { message: string }) => {
+    if (message) {
+      run(message.id, value.message);
+      return;
+    }
+
+    setAlterVisable(false);
+    alert.error('请重新选择要修改的message');
   };
-  const handleOk = (value: any) => {
-    console.log('form get value:', value);
-    run(message.id, value.message);
-  };
+
   return (
-    <>
-      <Modal
-        visible={visable}
-        title="修改message"
-        footer={null}
-        closable={false}
-        destroyOnClose={true}
-      >
-        <Form onFinish={handleOk}>
-          <Form.Item name="message" label="Message">
-            <Input defaultValue={message.message} />
-            {/*不能做到根据传入值默认显示*/}
-          </Form.Item>
-          <Form.Item {...tailLayout}>
-            <Space>
-              <Button type="primary" htmlType="submit">
-                确定
-              </Button>
-              <Button
-                htmlType="button"
-                onClick={() => {
-                  setAlterVisable(false);
-                }}
-              >
-                取消
-              </Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </>
+    <Modal
+      visible={visable}
+      title="修改message"
+      footer={null}
+      closable={false}
+      destroyOnClose={true}
+    >
+      <Form onFinish={handleOk}>
+        <Form.Item name="message" label="Message">
+          <Input defaultValue={message?.message} />
+          {/*不能做到根据传入值默认显示*/}
+        </Form.Item>
+        <Form.Item {...TAIL_LAYOUT}>
+          <Space>
+            <Button type="primary" htmlType="submit">
+              确定
+            </Button>
+            <Button
+              htmlType="button"
+              onClick={() => {
+                setAlterVisable(false);
+              }}
+            >
+              取消
+            </Button>
+          </Space>
+        </Form.Item>
+      </Form>
+    </Modal>
   );
 };
 

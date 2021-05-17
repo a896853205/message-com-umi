@@ -24,6 +24,7 @@
     "@types/react-copy-to-clipboard": "^5.0.0",
     "@umijs/plugin-sass": "^1.1.1",
     "@umijs/preset-react": "1.x",
+    "ahooks": "^2.10.3",
     "react-copy-to-clipboard": "^5.0.3",
     "typed.js": "^2.0.12",
     "umi": "^3.4.15"
