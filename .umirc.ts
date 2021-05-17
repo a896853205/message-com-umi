@@ -19,6 +19,9 @@ export default defineConfig({
     dataField: '',
   },
   dynamicImport: {
-    loading: '@/components/page-loading'
+    loading: '@/components/page-loading',
+  },
+  locale: {
+    default: 'zh-CN',
   },
 });
