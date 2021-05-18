@@ -9,8 +9,6 @@ import {
   message as alert,
 } from 'antd';
 import { FC, useState } from 'react';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { CopyOutlined } from '@ant-design/icons';
 
 import { newCode, create } from '@/services/apis/message';
 import styles from './form.module.scss';
@@ -46,11 +44,11 @@ const MessageCreateForm: FC<Props> = ({ setMessage, message }) => {
     manual: true,
     onSuccess: (data) => {
       alert.success('添加成功!');
-      const newCode: string = data.code;
+
       history.push({
         pathname: '/home/message-create/result',
         query: {
-          messageCode: newCode,
+          messageCode: data.code,
         },
       });
     },
@@ -69,7 +67,7 @@ const MessageCreateForm: FC<Props> = ({ setMessage, message }) => {
             setType(value);
           }}
         >
-          <Option value="male">
+          <Option value="information">
             <Tag color="blue">information</Tag>
           </Option>
           <Option value="success">
@@ -97,45 +95,33 @@ const MessageCreateForm: FC<Props> = ({ setMessage, message }) => {
 
       <Form.Item {...tailLayout}>
         {haveCode ? (
-          <>
-            <Space direction="vertical">
-              <div className={styles['get-code']}>
-                <Space>
-                  <Button
-                    type="link"
-                    onClick={() => {
-                      newCodeRequest(type);
-                    }}
-                  >
-                    重新获取
-                  </Button>
-                  <span>
-                    Code: <Tag color="#f50">{code}</Tag>
-                  </span>
-                  <CopyToClipboard
-                    text={`res.setHeader('code', '${code}');`}
-                    onCopy={() => {
-                      alert.success(`code "${code}" copy success`);
-                    }}
-                  >
-                    <Button type="link">
-                      <CopyOutlined />
-                      copy
-                    </Button>
-                  </CopyToClipboard>
-                </Space>
-              </div>
+          <Space direction="vertical">
+            <Space>
               <Button
-                type="primary"
-                size="middle"
-                loading={loading}
-                shape="round"
-                onClick={() => createRequest(type, message, code)}
+                type="link"
+                onClick={() => {
+                  newCodeRequest(type);
+                }}
+                className={styles['get-code']}
               >
-                满意
+                {/* FIXME：全英文把，我合计将来加个全球化，中英切换的 */}
+                重新获取
               </Button>
+              <span>
+                Code: <Tag color="#f50">{code}</Tag>
+              </span>
             </Space>
-          </>
+            <Button
+              type="primary"
+              size="middle"
+              loading={loading}
+              shape="round"
+              onClick={() => createRequest(type, message, code)}
+            >
+              {/* FIXME：全英文把，我合计将来加个全球化，中英切换的 */}
+              满意
+            </Button>
+          </Space>
         ) : (
           <Button
             type="link"

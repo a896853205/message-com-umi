@@ -90,8 +90,8 @@ export const create = (
   message: string,
   code: string,
 ): Promise<MC.Message> =>
-  client.put('messages/create', {
-    params: {
+  client.post('messages', {
+    data: {
       type,
       message,
       code,

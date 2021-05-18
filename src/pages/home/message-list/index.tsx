@@ -43,8 +43,8 @@ const MessageList = () => {
   const searchFetch = useCallback(async () => {
     try {
       const values = await form.validateFields();
-      const { code, message, type } = values;
-      run(code, message, type, page);
+      const { code: formCode, message: formMessage, type: formType } = values;
+      run(formCode, formMessage, formType, page);
     } catch (errorInfo) {
       console.error('Failed:', errorInfo);
     }

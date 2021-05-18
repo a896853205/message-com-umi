@@ -17,7 +17,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import Alter from './components/alter';
 import { deleteMessage } from '@/services/apis/message';
-import { getTagColorFromType } from '@/utils/tagColorFromType';
+import { getTagColorFromType } from '@/utils/tag-color-from-type';
 
 const { Column } = Table;
 const { confirm } = Modal;

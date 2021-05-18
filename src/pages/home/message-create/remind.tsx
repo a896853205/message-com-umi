@@ -5,7 +5,7 @@ import { Table, Tag, message, Button, Space } from 'antd';
 import { CopyOutlined } from '@ant-design/icons';
 
 import styles from './remind.module.scss';
-import { getTagColorFromType } from '@/utils/tagColorFromType';
+import { getTagColorFromType } from '@/utils/tag-color-from-type';
 
 const { Column } = Table;
 
@@ -22,7 +22,7 @@ const MessageCreateRemind: FC<Props> = ({ messageList, loading }) => {
         size="small"
         style={{ width: '100%' }}
         rowKey={(record) => record.code}
-        title={() => '推荐的message'}
+        title={() => '类似的message'}
         loading={loading}
       >
         <Column
@@ -43,10 +43,10 @@ const MessageCreateRemind: FC<Props> = ({ messageList, loading }) => {
                 <span>{record.message}</span>
 
                 <CopyToClipboard
-                  text={record.message}
+                  text={`res.setHeader('code', '${record.code}');`}
                   onCopy={() => {
                     message.success(
-                      `recommend message "${record.message}"， copy success!'`,
+                      `res.setHeader('code', '${record.code}'); copy success`,
                     );
                   }}
                 >
