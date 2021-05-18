@@ -3,7 +3,7 @@ declare namespace MC {
     id: number;
     uuid: string;
     message: string;
-    code: number;
+    code: string;
     type: string;
   }
 }

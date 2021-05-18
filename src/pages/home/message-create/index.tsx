@@ -12,18 +12,20 @@ const { Title } = Typography;
 
 const MessageList = () => {
   const [message, setMessage] = useState<string>('');
-  const [messageList, setMessageList] = useState<string[]>([]);
-  const { run } = useRequest(recommend, {
+  const [messageList, setMessageList] = useState<MC.Message[]>([]);
+
+  const { run, loading } = useRequest(recommend, {
     debounceInterval: 300,
     manual: true,
     onSuccess: (data) => {
-      console.log('create message return:', data);
       setMessageList(data.recommend);
     },
   });
+
   useEffect(() => {
     run(message);
   }, [message]);
+
   return (
     <Typography>
       <Title>
@@ -32,7 +34,7 @@ const MessageList = () => {
       <div className={styles['message-create-box']}>
         <Form setMessage={setMessage} message={message} />
         <div className={styles['divider']} />
-        <Remind messageList={messageList} />
+        <Remind messageList={messageList} loading={loading} />
       </div>
     </Typography>
   );

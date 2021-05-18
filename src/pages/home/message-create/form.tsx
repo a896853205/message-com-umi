@@ -1,4 +1,4 @@
-import { useRequest } from 'umi';
+import { useRequest, history } from 'umi';
 import {
   Form,
   Input,
@@ -30,7 +30,6 @@ interface Props {
 }
 const MessageCreateForm: FC<Props> = ({ setMessage, message }) => {
   const [form] = Form.useForm();
-
   const [type, setType] = useState<string>('unknow');
   const [code, setCode] = useState<string>('');
   const [haveCode, setHaveCode] = useState<boolean>(false);
@@ -43,11 +42,17 @@ const MessageCreateForm: FC<Props> = ({ setMessage, message }) => {
       setHaveCode(true);
     },
   });
-  const { run: createRequest } = useRequest(create, {
+  const { run: createRequest, loading } = useRequest(create, {
     manual: true,
-    onSuccess: () => {
-      alert.success('添加成功');
-      // TODO: 需要跳转到添加成功界面，那个界面有两个按钮‘copy’与‘继续添加’
+    onSuccess: (data) => {
+      alert.success('添加成功!');
+      const newCode: string = data.code;
+      history.push({
+        pathname: '/home/message-create/result',
+        query: {
+          messageCode: newCode,
+        },
+      });
     },
     onError: () => {
       alert.error('添加失败，请重试！');
@@ -91,53 +96,59 @@ const MessageCreateForm: FC<Props> = ({ setMessage, message }) => {
       </Form.Item>
 
       <Form.Item {...tailLayout}>
-        <Space>
-          {haveCode ? (
-            <Space>
+        {haveCode ? (
+          <>
+            <Space direction="vertical">
+              <div className={styles['get-code']}>
+                <Space>
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      newCodeRequest(type);
+                    }}
+                  >
+                    重新获取
+                  </Button>
+                  <span>
+                    Code: <Tag color="#f50">{code}</Tag>
+                  </span>
+                  <CopyToClipboard
+                    text={`res.setHeader('code', '${code}');`}
+                    onCopy={() => {
+                      alert.success(`code "${code}" copy success`);
+                    }}
+                  >
+                    <Button type="link">
+                      <CopyOutlined />
+                      copy
+                    </Button>
+                  </CopyToClipboard>
+                </Space>
+              </div>
               <Button
-                type="link"
-                htmlType="submit"
+                type="primary"
+                size="middle"
+                loading={loading}
+                shape="round"
                 onClick={() => createRequest(type, message, code)}
               >
                 满意
               </Button>
-              <Button
-                type="primary"
-                onClick={() => {
-                  newCodeRequest(type);
-                }}
-              >
-                重新获取
-              </Button>
-              <span>
-                Code: <Tag color="#f50">{code}</Tag>
-              </span>
-              <CopyToClipboard
-                text={`res.setHeader('code', '${code}');`}
-                onCopy={() => {
-                  alert.success(
-                    `res.setHeader('code', '${code}'); copy success`,
-                  );
-                }}
-              >
-                <Button type="link">
-                  <CopyOutlined />
-                  copy
-                </Button>
-              </CopyToClipboard>
             </Space>
-          ) : (
-            <Button
-              type="link"
-              htmlType="submit"
-              onClick={() => {
+          </>
+        ) : (
+          <Button
+            type="link"
+            htmlType="submit"
+            onClick={() => {
+              if (type && message) {
                 newCodeRequest(type);
-              }}
-            >
-              get "Code" !!!
-            </Button>
-          )}
-        </Space>
+              }
+            }}
+          >
+            get "Code" !!!
+          </Button>
+        )}
       </Form.Item>
     </Form>
   );
