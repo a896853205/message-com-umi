@@ -1,6 +1,7 @@
-import { useRequest, history } from 'umi';
+import { useRequest } from 'umi';
 import {
   Form,
+  FormInstance,
   Input,
   Button,
   Select,
@@ -10,7 +11,8 @@ import {
 } from 'antd';
 import { FC, useState } from 'react';
 
-import { newCode, create } from '@/services/apis/message';
+import CreateCode from './create-code';
+import { create } from '@/services/apis/message';
 import styles from './form.module.scss';
 
 const { Option } = Select;
@@ -23,40 +25,47 @@ const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
 interface Props {
+  form: FormInstance;
   setMessage: (message: string) => void;
   message: string;
+  type: string;
+  setType: (type: string) => void;
+  setIsAdded: (isAdded: boolean) => void;
+  setCreateMessage: (createMessage: MC.Message) => void;
 }
-const MessageCreateForm: FC<Props> = ({ setMessage, message }) => {
-  const [form] = Form.useForm();
-  const [type, setType] = useState<string>('unknow');
+const MessageCreateForm: FC<Props> = ({
+  form,
+  setMessage,
+  message,
+  type,
+  setType,
+  setIsAdded,
+  setCreateMessage,
+}) => {
   const [code, setCode] = useState<string>('');
   const [haveCode, setHaveCode] = useState<boolean>(false);
 
-  const { run: newCodeRequest } = useRequest(newCode, {
-    debounceInterval: 300,
+  const { run, loading } = useRequest(create, {
     manual: true,
     onSuccess: (data) => {
-      setCode(data.code);
-      setHaveCode(true);
-    },
-  });
-  const { run: createRequest, loading } = useRequest(create, {
-    manual: true,
-    onSuccess: (data) => {
-      alert.success('添加成功!');
-
-      history.push({
-        pathname: '/home/message-create/result',
-        query: {
-          messageCode: data.code,
-        },
-      });
+      alert.success('add message ssucceed!');
+      setIsAdded(true);
+      setCreateMessage(data);
     },
     onError: () => {
-      alert.error('添加失败，请重试！');
+      alert.error('add failure! try again!');
     },
   });
 
+  const createRequest = async () => {
+    try {
+      const values = await form.validateFields();
+      const { type: fromType, message: fromMessage } = values;
+      run(fromType, fromMessage, code);
+    } catch (errorInfo) {
+      console.log('Failed:', errorInfo);
+    }
+  };
   return (
     <Form form={form} {...layout} className={styles['form-box']}>
       <Form.Item name="type" label="Type" rules={[{ required: true }]}>
@@ -97,16 +106,13 @@ const MessageCreateForm: FC<Props> = ({ setMessage, message }) => {
         {haveCode ? (
           <Space direction="vertical">
             <Space>
-              <Button
-                type="link"
-                onClick={() => {
-                  newCodeRequest(type);
-                }}
-                className={styles['get-code']}
-              >
-                {/* FIXME：全英文把，我合计将来加个全球化，中英切换的 */}
-                重新获取
-              </Button>
+              <CreateCode
+                type={type}
+                message={message}
+                setCode={setCode}
+                setHaveCode={setHaveCode}
+                content={'acquire again'}
+              />
               <span>
                 Code: <Tag color="#f50">{code}</Tag>
               </span>
@@ -116,24 +122,19 @@ const MessageCreateForm: FC<Props> = ({ setMessage, message }) => {
               size="middle"
               loading={loading}
               shape="round"
-              onClick={() => createRequest(type, message, code)}
+              onClick={createRequest}
             >
-              {/* FIXME：全英文把，我合计将来加个全球化，中英切换的 */}
-              满意
+              satisfy
             </Button>
           </Space>
         ) : (
-          <Button
-            type="link"
-            htmlType="submit"
-            onClick={() => {
-              if (type && message) {
-                newCodeRequest(type);
-              }
-            }}
-          >
-            get "Code" !!!
-          </Button>
+          <CreateCode
+            type={type}
+            message={message}
+            setCode={setCode}
+            setHaveCode={setHaveCode}
+            content={' get "Code" !!!'}
+          />
         )}
       </Form.Item>
     </Form>

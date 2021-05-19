@@ -22,7 +22,7 @@ const MessageCreateRemind: FC<Props> = ({ messageList, loading }) => {
         size="small"
         style={{ width: '100%' }}
         rowKey={(record) => record.code}
-        title={() => '类似的message'}
+        title={() => 'Recommended message'}
         loading={loading}
       >
         <Column
@@ -43,11 +43,9 @@ const MessageCreateRemind: FC<Props> = ({ messageList, loading }) => {
                 <span>{record.message}</span>
 
                 <CopyToClipboard
-                  text={`res.setHeader('code', '${record.code}');`}
+                  text={record.message}
                   onCopy={() => {
-                    message.success(
-                      `res.setHeader('code', '${record.code}'); copy success`,
-                    );
+                    message.success(`message: ${record.message}; copy success`);
                   }}
                 >
                   <Button type="link">
