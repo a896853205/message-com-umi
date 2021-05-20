@@ -16,12 +16,15 @@ export const routes: IBestAFSRoute[] = [
     exact: true,
     path: '/oauth/:accessToken',
     component: '@/pages/oauth',
-    // 不展示顶栏
-    headerRender: false,
     // 不展示菜单
     menuRender: false,
     // 不展示菜单顶栏
     menuHeaderRender: false,
+  },
+  {
+    path: '/home/message-create/result',
+    component: '@/pages/home/message-create/result',
+    exact: true,
   },
   {
     path: '/home',

@@ -58,7 +58,7 @@ export const alterMessage = (id: number, message: string) =>
 export const recommend = (
   message: string,
 ): Promise<{
-  recommend: string[];
+  recommend: MC.Message[];
   count: number;
 }> =>
   client.get('messages/recommend', {
@@ -85,9 +85,13 @@ export const newCode = (type: string): Promise<{ code: string }> =>
  * @param message 信息内容
  * @param code code值
  */
-export const create = (type: string, message: string, code: string) =>
-  client.put('messages/create', {
-    params: {
+export const create = (
+  type: string,
+  message: string,
+  code: string,
+): Promise<MC.Message> =>
+  client.post('messages', {
+    data: {
       type,
       message,
       code,
