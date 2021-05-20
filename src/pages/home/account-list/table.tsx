@@ -1,7 +1,10 @@
 import { FC } from 'react';
 import { Table, Button, Avatar, Tag } from 'antd';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 const { Column } = Table;
+dayjs.extend(customParseFormat);
 
 /**
  * 通过用户是否授权获取Tag颜色
@@ -61,14 +64,12 @@ const AccountTable: FC<TableProps> = ({
         width={100}
       />
       <Column title="Name" dataIndex="name" key="name" />
-      <Column title="CreatdAt" dataIndex="creatdAt" key="creatdAt" />
+      <Column title="CreatedAt" dataIndex="createdAt" key="createdAt" />
       <Column
         title="Action"
         width={100}
         align="center"
-        render={() => {
-          return <Button type="link">comfirm</Button>;
-        }}
+        render={() => <Button type="link">comfirm</Button>}
       />
     </Table>
   );
