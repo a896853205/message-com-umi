@@ -69,9 +69,7 @@ const AccountTable: FC<TableProps> = ({
         title="Action"
         width={100}
         align="center"
-        render={() => {
-          return <Button type="link">comfirm</Button>;
-        }}
+        render={() => <Button type="link">comfirm</Button>}
       />
     </Table>
   );
