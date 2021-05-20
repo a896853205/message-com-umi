@@ -48,7 +48,7 @@ const MessageCreateForm: FC<Props> = ({
   const { run, loading } = useRequest(create, {
     manual: true,
     onSuccess: (data) => {
-      alert.success('add message ssucceed!');
+      alert.success('add message succeed!');
       setIsAdded(true);
       setCreateMessage(data);
     },
@@ -111,7 +111,7 @@ const MessageCreateForm: FC<Props> = ({
                 message={message}
                 setCode={setCode}
                 setHaveCode={setHaveCode}
-                content={'acquire again'}
+                content="acquire again"
               />
               <span>
                 Code: <Tag color="#f50">{code}</Tag>

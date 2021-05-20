@@ -27,19 +27,17 @@ const CreateCode: FC<Props> = ({
     },
   });
   return (
-    <>
-      <Button
-        type="link"
-        htmlType="submit"
-        onClick={() => {
-          if (type && message) {
-            run(type);
-          }
-        }}
-      >
-        {content}
-      </Button>
-    </>
+    <Button
+      type="link"
+      htmlType="submit"
+      onClick={() => {
+        if (type && message) {
+          run(type);
+        }
+      }}
+    >
+      {content}
+    </Button>
   );
 };
 
