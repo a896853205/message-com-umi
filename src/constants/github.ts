@@ -1,5 +1,5 @@
 /** github client */
-export const CLIENT_ID = '6395455096af873b10cf';
+export const CLIENT_ID = process.env.CLIENT_ID;
 
 /** github auth redirect uri */
-export const REDIRECT_URI = 'http://localhost:7002/oauth';
+export const REDIRECT_URI = process.env.REDIRECT_URI;
