@@ -3,6 +3,7 @@ import { FC } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Table, Tag, message, Button, Space } from 'antd';
 import { CopyOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
 
 import styles from './remind.module.scss';
 import { getTagColorFromType } from '@/utils/tag-color-from-type';
@@ -10,10 +11,20 @@ import { getTagColorFromType } from '@/utils/tag-color-from-type';
 const { Column } = Table;
 
 interface Props {
-  messageList: MC.Message[];
-  loading: boolean;
+  // loading: boolean;
 }
-const MessageCreateRemind: FC<Props> = ({ messageList, loading }) => {
+const MessageCreateRemind: FC<Props> = () => {
+  const { messageList, loading } = useSelector(
+    ({
+      messageList,
+      loading,
+    }: {
+      messageList: MC.Message[];
+      loading: boolean;
+    }) => {
+      return { messageList, loading };
+    },
+  );
   return (
     <div className={styles['remind-box']}>
       {/* TODO: 输入message时给与类似提示，模糊搜索？还是带有一些学习机制 */}

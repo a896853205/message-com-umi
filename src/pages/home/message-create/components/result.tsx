@@ -3,13 +3,19 @@ import { Result, Button, message as alert } from 'antd';
 
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { CopyOutlined } from '@ant-design/icons';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { changeIsAdded } from '../actions';
 
 interface Props {
   createMessage?: MC.Message;
-  setIsAdded: (isAdded: boolean) => void;
 }
 
-const ResultComponent: FC<Props> = ({ createMessage, setIsAdded }) => {
+const ResultComponent: FC<Props> = () => {
+  const dispatch = useDispatch();
+  const createdMessage = useSelector(
+    ({ createdMessage }: { createdMessage: MC.Message }) => createdMessage,
+  );
   return (
     <Result
       status="success"
@@ -19,16 +25,16 @@ const ResultComponent: FC<Props> = ({ createMessage, setIsAdded }) => {
           type="primary"
           key="create"
           onClick={() => {
-            setIsAdded(false);
+            dispatch(changeIsAdded());
           }}
         >
           Keep adding
         </Button>,
         <CopyToClipboard
-          text={`res.setHeader('code', '${createMessage?.code}');`}
+          text={`res.setHeader('code', '${createdMessage?.code}');`}
           onCopy={() => {
             alert.success(
-              `res.setHeader('code', '${createMessage?.code}'); copy success`,
+              `res.setHeader('code', '${createdMessage?.code}'); copy success`,
             );
           }}
           key="copy"
