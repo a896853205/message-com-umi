@@ -13,9 +13,8 @@ import { FC, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CreateCode from './create-code';
-import { create } from '@/services/apis/message';
 import styles from './form.module.scss';
-import { changeMessage, changeType } from '../actions';
+import { changeMessage, changeType, create } from '../actions';
 
 const { Option } = Select;
 
@@ -39,7 +38,7 @@ const MessageCreateForm: FC<Props> = ({ form }) => {
       return { code, haveCode };
     },
   );
-  const { run, loading } = useRequest(create, {
+  /* const { run, loading } = useRequest(create, {
     manual: true,
     onSuccess: (data) => {
       alert.success('add message succeed!');
@@ -49,13 +48,15 @@ const MessageCreateForm: FC<Props> = ({ form }) => {
     onError: () => {
       alert.error('add failure! try again!');
     },
-  });
+  }); */
 
   const createRequest = async () => {
     try {
       const values = await form.validateFields();
       const { type: fromType, message: fromMessage } = values;
-      run(fromType, fromMessage, code);
+      dispatch(create({ fromType, fromMessage, code }));
+      // dispatch({ type: 'CREATE', payload: { fromType, fromMessage, code } });
+      // run(fromType, fromMessage, code);
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
     }
@@ -110,7 +111,7 @@ const MessageCreateForm: FC<Props> = ({ form }) => {
             <Button
               type="primary"
               size="middle"
-              loading={loading}
+              // loading={loading}
               shape="round"
               onClick={createRequest}
             >

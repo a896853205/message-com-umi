@@ -6,6 +6,8 @@ import {
   codeReuqest,
   searchMessage,
   recommend,
+  createMessage,
+  create,
 } from './actions';
 import { getCode, getRecommendList, loading } from './api';
 
@@ -27,8 +29,19 @@ function* getRecommendMessageList({
   try {
     console.log('recommendMessageList', payload);
     const recommendList: MC.Message[] = yield call(getRecommendList, payload);
-    console.log('saga get response code:', recommendList);
+    console.log('saga get response recommendList:', recommendList);
     yield put(recommend(recommendList));
+  } catch (error) {
+    yield put({ type: 'FETCH_FAILED', error });
+  }
+}
+
+function* createNewMessage({ payload }: ReturnType<typeof create>) {
+  try {
+    console.log('createNewMessage', payload);
+    const newMessage: MC.Message = yield call(getRecommendList, payload);
+    console.log('saga get response createNewMessage:', newMessage);
+    yield put(createMessage(newMessage));
   } catch (error) {
     yield put({ type: 'FETCH_FAILED', error });
   }
@@ -37,6 +50,7 @@ function* getRecommendMessageList({
 function* watchRequest() {
   yield takeEvery(codeReuqest, getNewCode);
   yield takeEvery(searchMessage, getRecommendMessageList);
+  yield takeEvery(create, createNewMessage);
 }
 
 export default function* rootSaga() {

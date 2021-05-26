@@ -19,10 +19,12 @@ const initState: MC.ReduxState = {
 export default handleActions(
   {
     // 创建message，并将isAdded设置为true
-    [actionTypes.ADD_MESSAGE]: (state) => {
-      console.log('REDUX ADD MESSAGE');
+    [actionTypes.CREATE_MESSAGE]: (state, action) => {
+      console.log('REDUX CREATE MESSAGE');
       return produce(state, (draftState) => {
+        console.log('crate message reducer get action:', action);
         draftState.isAdded = true;
+        draftState.createdMessage = action.payload.createdMessage;
         draftState.loading = !draftState.loading;
       });
     },
@@ -61,9 +63,9 @@ export default handleActions(
     },
     [actionTypes.RECOMMEND]: (state, action) => {
       // 获取推荐message
-      console.log('reducer action:', action);
+      console.log('获取推荐reducer action:', action);
       return produce(state, (draftState) => {
-        draftState.createdMessage = action.payload.createdMessage;
+        draftState.messageList = action.payload.messageList;
         draftState.loading = !draftState.loading;
       });
     },

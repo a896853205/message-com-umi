@@ -1,7 +1,7 @@
 import { createActions } from 'redux-actions';
 
 export const actionTypes = {
-  ADD_MESSAGE: 'ADD_MESSAGE',
+  CREATE_MESSAGE: 'ADD_MESSAGE',
   SEARCH_MESSAGE: 'SEARCH_MESSAGE',
   CHANGE_ISADDED: 'CHANGE_ISADDED',
   CHANGE_MESSAGE: 'CHANGE_MESSAGE',
@@ -10,10 +10,12 @@ export const actionTypes = {
   CREATE_CODE: 'CREATE_CODE',
   CODE_REQUEST: 'CODE_REQUEST',
   RECOMMEND: 'RECOMMEND',
+  CREATE: 'CREATE',
 };
 
 export const {
-  addMessage,
+  create,
+  createMessage,
   searchMessage,
   recommend,
   changeIsAdded,
@@ -23,7 +25,8 @@ export const {
   createCode,
   codeReuqest,
 } = createActions({
-  [actionTypes.ADD_MESSAGE]: (state) => state,
+  [actionTypes.CREATE]: (payload) => payload,
+  [actionTypes.CREATE_MESSAGE]: (state) => state,
   [actionTypes.SEARCH_MESSAGE]: (state) => state,
   [actionTypes.RECOMMEND]: (recommend) => recommend,
   [actionTypes.CHANGE_ISADDED]: (state) => state,

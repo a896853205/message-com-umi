@@ -1,6 +1,6 @@
 import { useRequest } from 'umi';
 
-import { newCode, recommend } from '@/services/apis/message';
+import { newCode, recommend, create } from '@/services/apis/message';
 
 export const { run: getCode } = useRequest(newCode, {
   debounceInterval: 300,
@@ -13,4 +13,8 @@ export const { run: getRecommendList, loading } = useRequest(recommend, {
   /* onSuccess: (data) => {
       setMessageList(data.recommend);
   }, */
+});
+
+export const { run: createMessage } = useRequest(create, {
+  manual: true,
 });
