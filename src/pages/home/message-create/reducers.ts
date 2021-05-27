@@ -1,30 +1,26 @@
-import { handleActions } from 'redux-actions';
+import { handleActions, Action } from 'redux-actions';
 import produce from 'immer';
 
-import { actionTypes } from './actions';
+import { actionTypes, changeMessage } from './actions';
 
 const initState: MC.ReduxState = {
-  messages: {
-    messageList: [],
-    message: '',
-    code: '',
-    type: '',
-    isAdded: false,
-    haveCode: false,
-    createdMessage: undefined,
-    loading: false,
-  },
+  messageList: [],
+  message: 'hello',
+  code: '',
+  type: '',
+  isAdded: false,
+  haveCode: false,
+  createdMessage: undefined,
+  loading: false,
 };
 
-export default handleActions(
+export default handleActions<MC.ReduxState, any>(
   {
     // 创建message，并将isAdded设置为true
-    [actionTypes.CREATE_MESSAGE]: (state, action) => {
-      console.log('REDUX CREATE MESSAGE');
+    [actionTypes.CREATE_MESSAGE]: (state, { payload }: Action<MC.Message>) => {
       return produce(state, (draftState) => {
-        console.log('crate message reducer get action:', action);
         draftState.isAdded = true;
-        draftState.createdMessage = action.payload.createdMessage;
+        draftState.createdMessage = payload;
         draftState.loading = !draftState.loading;
       });
     },
@@ -32,43 +28,49 @@ export default handleActions(
       // 修改isAdded的值
       return produce(state, (draftState) => {
         draftState.isAdded = false;
+        draftState.haveCode = false;
+        draftState.loading = false;
       });
     },
-    [actionTypes.CHANGE_MESSAGE]: (state, action) => {
+    [actionTypes.CHANGE_MESSAGE]: (state, { payload }: Action<string>) => {
       // 修改message值
-      return produce(state, (draftState) => {
-        draftState.message = action.payload.message;
+      const result = produce(state, (draftState) => {
+        draftState.message = payload;
       });
+      return result;
     },
-    [actionTypes.CHANGE_CODE]: (state, action) => {
+    [actionTypes.CHANGE_CODE]: (state, { payload }: Action<string>) => {
       // 修改code值
-      return produce(state, (draftState) => {
-        draftState.code = action.payload.code;
+      const result = produce(state, (draftState) => {
+        draftState.code = payload;
       });
+      return result;
     },
-    [actionTypes.CHANEG_TYPE]: (state, action) => {
-      // 修改message值
-      return produce(state, (draftState) => {
-        draftState.type = action.payload.type;
+    [actionTypes.CHANEG_TYPE]: (state, { payload }: Action<string>) => {
+      // 修改type值
+      const result = produce(state, (draftState) => {
+        draftState.type = payload;
       });
+      return result;
     },
-    [actionTypes.CREATE_CODE]: (state, action) => {
+    [actionTypes.CREATE_CODE]: (state, { payload }: Action<string>) => {
       // 获取code
-      console.log('reducer action:', action);
       return produce(state, (draftState) => {
         draftState.haveCode = true;
-        draftState.code = action.payload.code;
-        draftState.loading = !draftState.loading;
+        draftState.code = payload;
+        draftState.loading = false;
       });
     },
-    [actionTypes.RECOMMEND]: (state, action) => {
+    [actionTypes.RECOMMEND_MESSAGE]: (
+      state,
+      { payload }: Action<MC.Message[]>,
+    ) => {
       // 获取推荐message
-      console.log('获取推荐reducer action:', action);
       return produce(state, (draftState) => {
-        draftState.messageList = action.payload.messageList;
-        draftState.loading = !draftState.loading;
+        draftState.messageList = payload;
+        draftState.loading = false;
       });
     },
   },
-  initState.messages,
+  initState,
 );

@@ -10,10 +10,7 @@ import { getTagColorFromType } from '@/utils/tag-color-from-type';
 
 const { Column } = Table;
 
-interface Props {
-  // loading: boolean;
-}
-const MessageCreateRemind: FC<Props> = () => {
+const MessageCreateRemind = () => {
   const { messageList, loading } = useSelector(
     ({
       messageList,
@@ -25,6 +22,7 @@ const MessageCreateRemind: FC<Props> = () => {
       return { messageList, loading };
     },
   );
+
   return (
     <div className={styles['remind-box']}>
       {/* TODO: 输入message时给与类似提示，模糊搜索？还是带有一些学习机制 */}

@@ -1,4 +1,3 @@
-import { useRequest } from 'umi';
 import {
   Form,
   FormInstance,
@@ -9,12 +8,12 @@ import {
   Space,
   message as alert,
 } from 'antd';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import CreateCode from './create-code';
 import styles from './form.module.scss';
-import { changeMessage, changeType, create } from '../actions';
+import { changeMessage, changeType, createMessageAction } from '../actions';
 
 const { Option } = Select;
 
@@ -30,37 +29,23 @@ interface Props {
 }
 
 const MessageCreateForm: FC<Props> = ({ form }) => {
-  //const [code, setCode] = useState<string>('');
-  // const [haveCode, setHaveCode] = useState<boolean>(false);
   const dispatch = useDispatch();
   const { code, haveCode } = useSelector(
     ({ code, haveCode }: { code: string; haveCode: boolean }) => {
       return { code, haveCode };
     },
   );
-  /* const { run, loading } = useRequest(create, {
-    manual: true,
-    onSuccess: (data) => {
-      alert.success('add message succeed!');
-      // setIsAdded(true);
-      // setCreateMessage(data);
-    },
-    onError: () => {
-      alert.error('add failure! try again!');
-    },
-  }); */
 
   const createRequest = async () => {
     try {
       const values = await form.validateFields();
-      const { type: fromType, message: fromMessage } = values;
-      dispatch(create({ fromType, fromMessage, code }));
-      // dispatch({ type: 'CREATE', payload: { fromType, fromMessage, code } });
-      // run(fromType, fromMessage, code);
+      const { type, message } = values;
+      dispatch(createMessageAction({ type, code, message }));
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
     }
   };
+
   return (
     <Form form={form} {...layout} className={styles['form-box']}>
       <Form.Item name="type" label="Type" rules={[{ required: true }]}>
@@ -68,7 +53,6 @@ const MessageCreateForm: FC<Props> = ({ form }) => {
           placeholder="Select a type of message"
           allowClear
           onChange={(value: string) => {
-            // setType(value);
             dispatch(changeType(value));
           }}
         >
@@ -93,7 +77,6 @@ const MessageCreateForm: FC<Props> = ({ form }) => {
       <Form.Item name="message" label="Message" rules={[{ required: true }]}>
         <Input
           onChange={(e) => {
-            // setMessage(e.target.value);
             dispatch(changeMessage(e.target.value));
           }}
         />
@@ -111,7 +94,6 @@ const MessageCreateForm: FC<Props> = ({ form }) => {
             <Button
               type="primary"
               size="middle"
-              // loading={loading}
               shape="round"
               onClick={createRequest}
             >

@@ -20,15 +20,13 @@ declare namespace MC {
    * redux ReduxState
    */
   interface ReduxState {
-    messages: {
-      messageList: MC.Message[];
-      message: string;
-      code: string;
-      type: string;
-      isAdded: boolean;
-      haveCode: boolean;
-      createdMessage: MC.Message | undefined;
-      loading: boolean;
-    };
+    messageList: MC.Message[];
+    message: string;
+    code: string;
+    type: string;
+    isAdded: boolean;
+    haveCode: boolean;
+    createdMessage: MC.Message | undefined;
+    loading: boolean;
   }
 }

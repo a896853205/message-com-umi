@@ -16,6 +16,7 @@ const ResultComponent: FC<Props> = () => {
   const createdMessage = useSelector(
     ({ createdMessage }: { createdMessage: MC.Message }) => createdMessage,
   );
+
   return (
     <Result
       status="success"

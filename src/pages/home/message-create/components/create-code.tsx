@@ -1,10 +1,8 @@
 import { FC } from 'react';
-import { useRequest } from 'umi';
 import { Button } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { newCode } from '@/services/apis/message';
-import { codeReuqest, createCode } from '../actions';
+import { newCodeAction } from '../actions';
 
 interface Props {
   content: string; // 按钮展示文字
@@ -24,22 +22,15 @@ const CreateCode: FC<Props> = ({ content }) => {
     },
   );
   const dispatch = useDispatch();
-  /* const { run } = useRequest(newCode, {
-    debounceInterval: 300,
-    manual: true,
-    onSuccess: (data) => {
-      setCode(data.code);
-      setHaveCode(true);
-    },
-  }); */
+
   return (
     <Button
       type="link"
       htmlType="submit"
       onClick={() => {
         if (type && message) {
-          dispatch(codeReuqest(type));
-          // run(type);
+          console.log('get code');
+          dispatch(newCodeAction(type));
         }
       }}
     >

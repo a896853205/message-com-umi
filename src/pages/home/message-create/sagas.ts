@@ -1,22 +1,19 @@
-import { call, put, TakeEffect, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery } from 'redux-saga/effects';
 
 import {
   createCode,
-  actionTypes,
-  codeReuqest,
-  searchMessage,
-  recommend,
+  newCodeAction,
+  searchAction,
+  recommendMessage,
   createMessage,
-  create,
+  createMessageAction,
 } from './actions';
-import { getCode, getRecommendList, loading } from './api';
 
-function* getNewCode({ payload }: ReturnType<typeof codeReuqest>) {
-  // yield call();
+import { newCode, recommend, create } from '@/services/apis/message';
+
+function* getNewCode({ payload }: ReturnType<typeof newCodeAction>) {
   try {
-    console.log('getNewCode get param:', payload);
-    const code: string = yield call(getCode, payload);
-    console.log('saga get response code:', code);
+    const { code } = yield call(newCode, payload);
     yield put(createCode(code));
   } catch (error) {
     yield put({ type: 'FETCH_FAILED', error });
@@ -25,22 +22,22 @@ function* getNewCode({ payload }: ReturnType<typeof codeReuqest>) {
 
 function* getRecommendMessageList({
   payload,
-}: ReturnType<typeof searchMessage>) {
+}: ReturnType<typeof searchAction>) {
   try {
-    console.log('recommendMessageList', payload);
-    const recommendList: MC.Message[] = yield call(getRecommendList, payload);
-    console.log('saga get response recommendList:', recommendList);
-    yield put(recommend(recommendList));
+    const recommendList: { count: number; recommend: MC.Message[] } =
+      yield call(recommend, payload);
+    yield put(recommendMessage(recommendList.recommend));
   } catch (error) {
     yield put({ type: 'FETCH_FAILED', error });
   }
 }
 
-function* createNewMessage({ payload }: ReturnType<typeof create>) {
+function* createNewMessage({
+  payload,
+}: ReturnType<typeof createMessageAction>) {
   try {
-    console.log('createNewMessage', payload);
-    const newMessage: MC.Message = yield call(getRecommendList, payload);
-    console.log('saga get response createNewMessage:', newMessage);
+    const { type, message, code } = payload;
+    const newMessage: MC.Message = yield call(create, type, message, code);
     yield put(createMessage(newMessage));
   } catch (error) {
     yield put({ type: 'FETCH_FAILED', error });
@@ -48,12 +45,11 @@ function* createNewMessage({ payload }: ReturnType<typeof create>) {
 }
 
 function* watchRequest() {
-  yield takeEvery(codeReuqest, getNewCode);
-  yield takeEvery(searchMessage, getRecommendMessageList);
-  yield takeEvery(create, createNewMessage);
+  yield takeEvery(newCodeAction, getNewCode);
+  yield takeEvery(searchAction, getRecommendMessageList);
+  yield takeEvery(createMessageAction, createNewMessage);
 }
 
 export default function* rootSaga() {
   yield watchRequest();
-  // yield takeEvery('CODE_REQUEST', getNewCode);
 }
