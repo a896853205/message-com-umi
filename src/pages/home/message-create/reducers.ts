@@ -21,7 +21,7 @@ export default handleActions<MC.ReduxState, any>(
       return produce(state, (draftState) => {
         draftState.isAdded = true;
         draftState.createdMessage = payload;
-        draftState.loading = !draftState.loading;
+        draftState.loading = false;
       });
     },
     [actionTypes.CHANGE_ISADDED]: (state) => {
