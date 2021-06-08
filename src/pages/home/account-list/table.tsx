@@ -2,6 +2,8 @@ import { FC } from 'react';
 import { Table, Button, Avatar, Tag } from 'antd';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import useRequest from '@ahooksjs/use-request';
+import { changeIsAuth } from '@/services/apis/account';
 
 const { Column } = Table;
 dayjs.extend(customParseFormat);
@@ -27,6 +29,7 @@ interface TableProps {
   loading: boolean;
   handlePageChange: (page: number) => void;
   total: number;
+  handleAlter: () => void;
 }
 
 const AccountTable: FC<TableProps> = ({
@@ -34,7 +37,12 @@ const AccountTable: FC<TableProps> = ({
   loading,
   handlePageChange,
   total,
+  handleAlter,
 }) => {
+  const { run } = useRequest(changeIsAuth, {
+    manual: true,
+  });
+
   return (
     <Table
       dataSource={accounts}
@@ -69,7 +77,32 @@ const AccountTable: FC<TableProps> = ({
         title="Action"
         width={100}
         align="center"
-        render={() => <Button type="link">comfirm</Button>}
+        render={(record) => {
+          if (record.isAuth === 1)
+            return (
+              <Button
+                type="link"
+                onClick={() => {
+                  run(record.uuid, 0);
+                  handleAlter();
+                }}
+              >
+                cancel
+              </Button>
+            );
+          else if (record.isAuth === 0)
+            return (
+              <Button
+                type="link"
+                onClick={() => {
+                  run(record.uuid, 1);
+                  handleAlter();
+                }}
+              >
+                comfirm
+              </Button>
+            );
+        }}
       />
     </Table>
   );

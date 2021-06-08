@@ -18,8 +18,8 @@ const Search: FC<SearchProps> = ({ handleNameChange, handleIsAuthChange }) => {
 
         <Form.Item label="Isauth">
           <Select onChange={(evt) => handleIsAuthChange(Number(evt))} clearIcon>
-            <Option value={0}>auth</Option>
-            <Option value={1}>unauth</Option>
+            <Option value={1}>auth</Option>
+            <Option value={0}>unauth</Option>
           </Select>
         </Form.Item>
       </Form>

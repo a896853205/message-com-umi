@@ -23,3 +23,11 @@ export const account = (
  */
 export const oneAccount = (): Promise<{ accounts: MC.Account }> =>
   client.get('accounts/one');
+
+export const changeIsAuth = (uuid: string, isAuth: number): Promise<null> =>
+  client.put('accounts/isAuth', {
+    params: {
+      uuid,
+      isAuth,
+    },
+  });

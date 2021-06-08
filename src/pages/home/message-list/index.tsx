@@ -51,9 +51,11 @@ const MessageList = () => {
   }, [code, message, type, page]);
 
   useEffect(() => {
-    searchFetch().finally(() => {
-      setFalse();
-    });
+    if (isFresh) {
+      searchFetch().finally(() => {
+        setFalse();
+      });
+    }
   }, [isFresh]);
 
   return (

@@ -3,6 +3,7 @@ import { Typography } from 'antd';
 
 import TypedSpan from '@/components/typed-span';
 import useRequest from '@ahooksjs/use-request';
+import { useBoolean } from 'ahooks';
 
 import Table from './table';
 import Search from './search';
@@ -28,12 +29,27 @@ const AccountList = () => {
   const [name, setName] = useState('');
   const [isAuth, setIsAuth] = useState<number>();
   const [page, setPage] = useState(1);
+  const [isFresh, { setTrue, setFalse }] = useBoolean(true);
 
-  const accountListRequest = useCallback(() => {
-    run(page, name, isAuth);
+  useEffect(() => {
+    setTrue();
   }, [page, name, isAuth]);
 
-  useEffect(accountListRequest, [name, isAuth]);
+  const searchAccounts = useCallback(async () => {
+    try {
+      run(page, name, isAuth);
+    } catch (error) {
+      console.error('Failed:', error);
+    }
+  }, [page, name, isAuth]);
+
+  useEffect(() => {
+    if (isFresh) {
+      searchAccounts().finally(() => {
+        setFalse();
+      });
+    }
+  }, [isFresh]);
 
   return (
     <Typography>
@@ -46,6 +62,7 @@ const AccountList = () => {
         loading={loading}
         handlePageChange={setPage}
         total={total}
+        handleAlter={setTrue}
       />
     </Typography>
   );
