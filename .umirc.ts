@@ -19,6 +19,10 @@ export default defineConfig({
     dataField: '',
   },
   dynamicImport: {
-    loading: '@/components/page-loading'
+    loading: '@/components/page-loading',
+  },
+  define: {
+    'process.env.CLIENT_ID': process.env.CLIENT_ID,
+    'process.env.REDIRECT_URI': process.env.REDIRECT_URI,
   },
 });
