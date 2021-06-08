@@ -1,10 +1,5 @@
 import MessageList from './components/MessageList';
 
-const CreateMessageIndex = () => {
-  return (
-    <>
-      <MessageList />
-    </>
-  );
-};
+const CreateMessageIndex = () => <MessageList />;
+
 export default CreateMessageIndex;

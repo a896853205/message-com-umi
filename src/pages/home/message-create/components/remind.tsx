@@ -1,5 +1,3 @@
-import { FC } from 'react';
-
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Table, Tag, message, Button, Space } from 'antd';
 import { CopyOutlined } from '@ant-design/icons';
@@ -33,6 +31,7 @@ const MessageCreateRemind = () => {
         rowKey={(record) => record.code}
         title={() => 'Recommended message'}
         loading={loading}
+        pagination={false}
       >
         <Column
           title="Type"
@@ -46,25 +45,23 @@ const MessageCreateRemind = () => {
           title="Message"
           dataIndex="message"
           key="message"
-          render={(_, record: MC.Message) => {
-            return (
-              <Space>
-                <span>{record.message}</span>
+          render={(_, record: MC.Message) => (
+            <Space>
+              <span>{record.message}</span>
 
-                <CopyToClipboard
-                  text={record.message}
-                  onCopy={() => {
-                    message.success(`message: ${record.message}; copy success`);
-                  }}
-                >
-                  <Button type="link">
-                    <CopyOutlined />
-                    copy
-                  </Button>
-                </CopyToClipboard>
-              </Space>
-            );
-          }}
+              <CopyToClipboard
+                text={record.message}
+                onCopy={() => {
+                  message.success(`message: ${record.message}; copy success`);
+                }}
+              >
+                <Button type="link">
+                  <CopyOutlined />
+                  copy
+                </Button>
+              </CopyToClipboard>
+            </Space>
+          )}
         />
       </Table>
     </div>
