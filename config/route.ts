@@ -22,11 +22,6 @@ export const routes: IBestAFSRoute[] = [
     menuHeaderRender: false,
   },
   {
-    path: '/home/message-create/result',
-    component: '@/pages/home/message-create/result',
-    exact: true,
-  },
-  {
     path: '/home',
     component: '@/pages/home',
     flatMenu: true,

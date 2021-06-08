@@ -1,4 +1,3 @@
-import { useRequest } from 'umi';
 import {
   Form,
   FormInstance,
@@ -9,11 +8,12 @@ import {
   Space,
   message as alert,
 } from 'antd';
-import { FC, useState } from 'react';
+import { FC } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import CreateCode from './create-code';
-import { create } from '@/services/apis/message';
 import styles from './form.module.scss';
+import { changeMessage, changeType, createMessageAction } from '../actions';
 
 const { Option } = Select;
 
@@ -26,46 +26,26 @@ const tailLayout = {
 };
 interface Props {
   form: FormInstance;
-  setMessage: (message: string) => void;
-  message: string;
-  type: string;
-  setType: (type: string) => void;
-  setIsAdded: (isAdded: boolean) => void;
-  setCreateMessage: (createMessage: MC.Message) => void;
 }
-const MessageCreateForm: FC<Props> = ({
-  form,
-  setMessage,
-  message,
-  type,
-  setType,
-  setIsAdded,
-  setCreateMessage,
-}) => {
-  const [code, setCode] = useState<string>('');
-  const [haveCode, setHaveCode] = useState<boolean>(false);
 
-  const { run, loading } = useRequest(create, {
-    manual: true,
-    onSuccess: (data) => {
-      alert.success('add message succeed!');
-      setIsAdded(true);
-      setCreateMessage(data);
+const MessageCreateForm: FC<Props> = ({ form }) => {
+  const dispatch = useDispatch();
+  const { code, haveCode } = useSelector(
+    ({ code, haveCode }: { code: string; haveCode: boolean }) => {
+      return { code, haveCode };
     },
-    onError: () => {
-      alert.error('add failure! try again!');
-    },
-  });
+  );
 
   const createRequest = async () => {
     try {
       const values = await form.validateFields();
-      const { type: fromType, message: fromMessage } = values;
-      run(fromType, fromMessage, code);
+      const { type, message } = values;
+      dispatch(createMessageAction({ type, code, message }));
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
     }
   };
+
   return (
     <Form form={form} {...layout} className={styles['form-box']}>
       <Form.Item name="type" label="Type" rules={[{ required: true }]}>
@@ -73,7 +53,7 @@ const MessageCreateForm: FC<Props> = ({
           placeholder="Select a type of message"
           allowClear
           onChange={(value: string) => {
-            setType(value);
+            dispatch(changeType(value));
           }}
         >
           <Option value="information">
@@ -97,7 +77,7 @@ const MessageCreateForm: FC<Props> = ({
       <Form.Item name="message" label="Message" rules={[{ required: true }]}>
         <Input
           onChange={(e) => {
-            setMessage(e.target.value);
+            dispatch(changeMessage(e.target.value));
           }}
         />
       </Form.Item>
@@ -106,13 +86,7 @@ const MessageCreateForm: FC<Props> = ({
         {haveCode ? (
           <Space direction="vertical">
             <Space>
-              <CreateCode
-                type={type}
-                message={message}
-                setCode={setCode}
-                setHaveCode={setHaveCode}
-                content="acquire again"
-              />
+              <CreateCode content="acquire again" />
               <span>
                 Code: <Tag color="#f50">{code}</Tag>
               </span>
@@ -120,7 +94,6 @@ const MessageCreateForm: FC<Props> = ({
             <Button
               type="primary"
               size="middle"
-              loading={loading}
               shape="round"
               onClick={createRequest}
             >
@@ -128,13 +101,7 @@ const MessageCreateForm: FC<Props> = ({
             </Button>
           </Space>
         ) : (
-          <CreateCode
-            type={type}
-            message={message}
-            setCode={setCode}
-            setHaveCode={setHaveCode}
-            content={' get "Code" !!!'}
-          />
+          <CreateCode content={' get "Code" !!!'} />
         )}
       </Form.Item>
     </Form>
