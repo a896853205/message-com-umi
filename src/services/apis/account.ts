@@ -16,3 +16,10 @@ export const account = (
       page,
     },
   });
+
+/**
+ * 获取个人账号数据
+ * @returns 账号数据
+ */
+export const oneAccount = (): Promise<{ accounts: MC.Account }> =>
+  client.get('accounts/one');

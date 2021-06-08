@@ -4,11 +4,11 @@ import { history, useRequest } from 'umi';
 import { Avatar, Button, Space, Divider } from 'antd';
 import { LogoutOutlined } from '@ant-design/icons';
 
-import { account } from '@/services/apis/account';
+import { oneAccount } from '@/services/apis/account';
 import styles from './user-header.module.scss';
 
 const UserHeader = memo(() => {
-  const { data } = useRequest<MC.Account>(account);
+  const { data } = useRequest<MC.Account>(oneAccount);
 
   return (
     <Space>
