@@ -30,5 +30,6 @@ export default defineConfig({
   define: {
     'process.env.CLIENT_ID': process.env.CLIENT_ID,
     'process.env.REDIRECT_URI': process.env.REDIRECT_URI,
+    'process.env.APIS_PREFIX': process.env.APIS_PREFIX,
   },
 });
